@@ -1,0 +1,23 @@
+*{margin:0;padding:0;}
+.sort_list{list-style:none;font-family: Verdana, Arial, '宋体'; font-size: 12px;text-indent:5px;width:100%;}
+.sort_list{background-color:#eee;border:2px solid #999; border-radius:5px; padding:12px 15px 12px 15px; display:block;position:relative;}
+
+.sort_list .top_level{padding-left:24px;}
+.sort_list .sec_level{padding-left:48px;}
+/*.sort_list li dd{display:block;border-bottom:1px dashed #ccc;line-height:24px;cursor:pointer;border-radius:4px;}*/
+.sort_list li dd{line-height:24px;cursor:pointer;height:24px;display:block;}
+.sort_list li .dd_selected {background-color:#ccc;opacity:0.4;}
+.sort_list li dd b{display:block;width:24px;height:24px;background-image:url(jss-bg.png);background-repeat:no-repeat;float:left;background-position:80px 0px;}
+.sort_list li dd span{display:block;height:24px;float:left;}
+.sort_list li dd .top_level_open{background-position:-48px 0px;}
+.sort_list li dd .top_level_close{background-position:-72px 0px;}
+.sort_list li dd .sec_level_selected{background-position:-96px 0px;}
+
+
+/*指向*/
+.sort_list .drop_arrow {background-image:url(jss-bg.png);background-image:url(jss-bg.png);width:24px;height:24px;position:absolute;background-position:-96px 0px;}
+.sort_list .drop_target {background-color:#ccc;}
+/*指向一级菜单*/
+/*.sort_list .drop_arrow {top:0px;left:24px;}*/
+/*指向二级菜单*/
+/*.sort_list .drop_arrow {top:24px;left:72px;}*/

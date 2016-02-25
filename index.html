@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="./jss/jss.css" rel="stylesheet" type="text/css">
+<script src="http://apps.bdimg.com/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="./jss/jss.js"></script>
+<title>justsort二级排序</title>
+</head>
+<body>
+<div style="width:300px;margin:0 auto;padding-top:30px;">
+	<ul class="sort_list">
+		<div class="drop_arrow"></div>
+		<li>
+		<dl>
+			<dd class="top_level"><span><b class="top_level_close"></b>打开状态</span></dd>
+			<dd class="sec_level dd_selected"><span><b class="sec_level_selected"></b>被选中</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+		</dl>
+		</li>
+		<li>
+		<dl>
+			<dd class="top_level drop_prev"><span><b class="top_level_close"></b>打开状态</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level drop_target"><b></b><span>目标</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+			<dd class="sec_level"><span><b></b>二级分类</span></dd>
+		</dl>
+		</li>
+		<li>
+		<dl>
+			<dd class="top_level"><b class="top_level_close"></b>关闭状态</dd>
+		</dl>
+		</li>
+	</ul>
+</div>
+<script>
+var jss = $('.sort_list').sort;
+</script>
+<body>
+</html>
