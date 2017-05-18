@@ -1,24 +1,8 @@
+html{background-color:#fafafa;}
 *{margin:0;padding:0;}
-.sort_list{list-style:none;font-family: Verdana, Arial, '宋体'; font-size: 12px;text-indent:5px;width:100%;}
-.sort_list{background-color:#eee;border:2px solid #999; border-radius:5px; padding:12px 15px 12px 15px; display:block;position:relative;}
+.icon { width: 1em; height: 1em; vertical-align: -0.15em; fill: currentColor; overflow: hidden; }
 
-.sort_list .top_level{padding-left:10px;}
-.sort_list .sec_level{padding-left:48px;}
-/*.sort_list li dd{display:block;border-bottom:1px dashed #ccc;line-height:24px;cursor:pointer;border-radius:4px;}*/
-.sort_list li dd{line-height:24px;display:block;width:100%;height:24px;}
-.sort_list li dd b{display:block;width:24px;height:24px;background-image:url(jss-bg.png);background-repeat:no-repeat;float:left;background-position:80px 0px;}
-.sort_list li dd span{display:block;height:24px;float:left;padding:0 10px 0 10px;cursor:pointer;}
-.top_level_close b{background-position:-48px 0px !important;}
-.top_level_open b{background-position:-72px 0px !important;}
-.sec_level b{background-position:-24px -24px !important;}
-.sort_list li .sec_level_selected span{background-color:#ccc;opacity:0.4;}
-.sort_list li .sec_level_selected b{background-position:-24px -24px;}
-.sort_list .drop_target span {background-color:#ecca79;}
-
-/*指向*/
-.sort_list .drop_arrow {background-image:url(jss-bg.png);width:24px;height:24px;position:absolute;background-position:-96px 0px;}
-
-.move_copy{background-color:#aaa;padding:4px 15px 4px 15px;opacity:0.8;border:1px solid #888;position:absolute;display:none;line-height:24px;}
-.move_copy b{background-image:url(jss-bg.png);width:24px;height:24px;display:block;float:left;}
-.top_move_copy b{background-position:-72px 0px !important;}
-.sec_move_copy b{background-position:-24px -24px !important;}
+.mm .li-item{height:30px;line-height:30px;border:1px #ddd solid;border-radius: 4px;background-color:#ddd;margin:3px;text-indent:10px;color:#444;cursor:pointer;}
+.mm .li-item span{margin-left:15px;}
+.mm .li-item:hover{background-color:#ccc;}
+.mm li ul li{margin-left:50px;}

@@ -1,9 +1,11 @@
-$(function() {
+$.fn.justSort = function(selector, config, data) {
 	var _consts = {
 		isMove: false,
 		config: {
 			//是否允许修改级别
 			changeLevel: false,
+			//数据
+			dataUrl: '/php/tree.php'
 		},
 
 	};
@@ -24,125 +26,74 @@ $(function() {
 		ulLeft: 0,
 		targetTop: 0,
 		targetLeft: 0,
-	}
+	};
 
 	var out = {
 		selectId: 0,
 		targetId: 0,
 		dropPos: null,
+	};
+
+	var _html = '';
+
+	//初始化
+	var _init = function() {
+		_view();
+
 	}
 
-	var _view = {
-		//span标签被选中
-		spanSelected: function() {
-			dom.selectDd.addClass('sec_level_selected');
-		},
-		spanUnSelected: function() {
-			dom.selectDd.removeClass('sec_level_selected');
-		},
-		cloneObj: function() { //克隆选择对象
-			dom.copySpan = dom.selectSpan.clone();
-			dom.copySpan.addClass('move_copy');
-			if (dom.selectDdLevel == 0) {
-				dom.copySpan.addClass('top_move_copy');
-			} else {
-				dom.copySpan.addClass('sec_move_copy');
+	//渲染模板
+	var _view = function() {
+		var url = _consts.config.dataUrl;
+		_html = '<ul class="mm">'
+		$.get(url, function(data) {
+			for (var i = 0, length = data.length; i < length; i++) {
+				_html += '<li>';
+				_html += '<div class="li-item" data-id=' + data[i].id + ' data-url=' + data[i].url + '>';
+				_html += '<svg class="icon open" aria-hidden="true"> <use xlink:href="#icon-jianhao"></use> </svg>';
+				_html += '<span>' + data[i].name + '</span></div>';
+				var length2 = data[i].children.length;
+				if (length2) {
+					_html += '<ul>';
+					for (var y = 0; y < length2; y++) {
+						_html += '<li><div class="li-item" data-id=' + data[i].children[y].id + ' data-url=' + data[i].children[y].url + '><span>' + data[i].children[y].name + '</span></div></li>';
+					}
+					_html += '</ul>';
+				}
+				_html += '</li>';
 			}
-			dom.jss.append(dom.copySpan);
-		},
-		cloneMove: function(e) { //复制对象的移动
-			dom.copySpan.css('top', e.pageY - pos.ulTop - 12);
-			dom.copySpan.css('left', e.pageX - pos.ulLeft);
-			dom.copySpan.css('display', 'inline');
-		},
-		ddOnMove: function() { //移动过程中，移动到其他dd上时
-			dom.allSpan.bind('mousemove', function(e) {
-				if (!_consts.isMove) return false;
-				dom.targetDd = $(this).parent();
-				dom.targetDd.addClass('drop_target');
-				out.targetId = dom.targetDd.attr('id').replace('dd_', '');
-				var offset = $(this).offset();
-				pos.targetLeft = offset.left;
-				pos.targetTop = offset.top;
-				if (dom.targetDd.hasClass('top_level')) {
-					dom.targetDdLevel = 0;
-					dom.arrow.css('left', 24);
-				} else {
-					dom.targetDdLevel = 1;
-					dom.arrow.css('left', 48);
-				}
-				if (e.pageY - pos.targetTop >= 12) {
-					out.dropPos = 'next';
-					dom.arrow.css('top', pos.targetTop - 24);
-				} else {
-					out.dropPos = 'prev';
-					dom.arrow.css('top', pos.targetTop - 48);
-				}
-			});
-			dom.allSpan.mouseout(function() {
-				if (!_consts.isMove) return false;
-				dom.targetDd.removeClass('drop_target');
-			});
 
+			_html += '</ul>';
+			$(selector).html(_html);
 		},
-		moveUnSelect: function() { //移动时禁止选中文字
-			//window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty(); 
-			dom.jss.bind('selectstart', function() {
-				return false;
-			})
+		'json');
+	}
+
+	//子菜单隐藏
+	var _close = function(dom) {
+		dom.parent().parent().find('ul').hide();
+		dom.html('<use xlink:href="#icon-jiahao1"></use>');
+	}
+
+	//子菜单展示
+	var _open = function(dom) {
+		dom.parent().parent().find('ul').show();
+		dom.html('<use xlink:href="#icon-jianhao"></use>');
+	}
+
+	$(selector).on('click', '.mm svg', function() {
+		var status = $(this).find('use').attr('xlink:href');
+		if (status == '#icon-jiahao1') {
+			_open($(this));
+		} else {
+			_close($(this));
 		}
-	}
+	})
 
-	var initJss = function(selector) {
-		dom.jss = $(selector).find('.sort_list');
-		dom.allSpan = dom.jss.find('span');
-		dom.arrow = dom.jss.find('.drop_arrow');
-		var offset = dom.jss.offset();
-		pos.ulTop = offset.top;
-		pos.ulLeft = offset.left;
-	}
-	var selectObj = function() { //选择对象
-		dom.jss.find('span').mousedown(function() {
-			_consts.isMove = true;
-			dom.selectSpan = $(this);
-			dom.selectDd = $(this).parent();
-			out.selectId = dom.selectDd.attr('id').replace('dd_', '');
-			if (dom.selectDd.hasClass('top_level')) {
-				dom.selectDdLevel = 0;
-			} else {
-				dom.selectDdLevel = 1;
-			}
-			_view.moveUnSelect();
-			_view.spanSelected();
-			_view.cloneObj();
-			moveObj();
-		})
-	}
-	var moveObj = function() { //移动鼠标
-		dom.jss.mousemove(function(e) {
-			if (!_consts.isMove) return false;
-			_view.cloneMove(e);
-		})
-		_view.ddOnMove();
-		dropObj();
-	}
-	var dropObj = function() { //放置目标
-		dom.jss.mouseup(function(e) {
-			_consts.isMove = false;
-			dom.copySpan.detach();
-			_view.spanUnSelected();
-			dom.allSpan.unbind('mousemove')
-			dom.targetDd.removeClass('drop_target');
-			if (console.log) {
-				console.log(out)
-			}
-		})
-	}
+	_init();
+}
 
-	$.fn.justSort = function(selector, config, data) {
-		initJss(selector);
-		selectObj();
-	}
-
+$(function() {
+	$.fn.justSort('#sort_div');
 })
 
