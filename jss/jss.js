@@ -9,11 +9,16 @@ $.fn.justSort = function(selector, config, data) {
 		},
 
 	};
-	var dom = {
+
+	//存储选择的元素值
+	var _selData = {};
+	//存储放置的元素值
+	var _tarData = {};
+
+	var _selDom = {
 		jss: null,
 		selectSpan: null,
 		selectDd: null,
-		//被选择元素的级别
 		selectDdLevel: 0,
 		targetDdLevel: 0,
 		copySpan: null,
@@ -21,7 +26,6 @@ $.fn.justSort = function(selector, config, data) {
 		targetDd: null,
 		arrow: null,
 	};
-
 	var copDom = {
 
 	};
@@ -56,14 +60,14 @@ $.fn.justSort = function(selector, config, data) {
 		$.get(url, function(data) {
 			for (var i = 0, length = data.length; i < length; i++) {
 				_html += '<li>';
-				_html += '<div class="li-item" data-id=' + data[i].id + ' data-url=' + data[i].url + '>';
+				_html += '<div class="li-item" data-pid="0" data-id="' + data[i].id + '" data-url="' + data[i].url + '">';
 				_html += '<svg class="icon open" aria-hidden="true"> <use xlink:href="#icon-jianhao"></use> </svg>';
 				_html += '<span>' + data[i].name + '</span></div>';
 				var length2 = data[i].children.length;
 				if (length2) {
 					_html += '<ul>';
 					for (var y = 0; y < length2; y++) {
-						_html += '<li><div class="li-item" data-id=' + data[i].children[y].id + ' data-url=' + data[i].children[y].url + '><span>' + data[i].children[y].name + '</span></div></li>';
+						_html += '<li><div class="li-item" data-id="' + data[i].children[y].id + '" data-url="' + data[i].children[y].url + '" data-pid="' + data[i].id + '"><span>' + data[i].children[y].name + '</span></div></li>';
 					}
 					_html += '</ul>';
 				}
@@ -90,7 +94,11 @@ $.fn.justSort = function(selector, config, data) {
 
 	//复制选中元素
 	var _clone = function(dom) {
+		if (_selData.selectPid == '0') {
+			dom = dom.parent();
+		}
 		copDom = dom.clone();
+		_consts.isCopy = true;
 		var width = dom.width();
 		copDom.css({
 			position: 'absolute',
@@ -108,7 +116,7 @@ $.fn.justSort = function(selector, config, data) {
 	}
 
 	//切换展示与显示
-	$(selector).on('click', '.mm svg', function() {
+	$(selector).on('click', '.mm svg', function(e) {
 		var status = $(this).find('use').attr('xlink:href');
 		if (status == '#icon-jiahao1') {
 			_open($(this));
@@ -119,30 +127,44 @@ $.fn.justSort = function(selector, config, data) {
 
 	//父级菜单的拖拽
 	$(selector).on('mousedown', '.mm li div', function(e) {
-		dom.selectId = $(this).attr('data-id');
+		_selData.selectId = $(this).attr('data-id');
+		_selData.selectPid = $(this).attr('data-pid');
+		//console.log(_selDom)
 		//查看父级中是否有子菜单，如果有的话，则不能变成子菜单
-		dom.hasChild = $(this).parent().find('ul li').length;
+		_selData.hasChild = $(this).parent().find('ul li').length;
 		_consts.isMove = true;
+		_selDom = $(this);
 		_mouse.top = e.pageY;
 		_mouse.left = e.pageX;
-		_clone($(this));
 		//out.selectId = dom.selectDd.attr('id').replace('dd_', '');
 	})
 
 	$(selector).on('mousemove', '.mm', function(e) {
 		e.preventDefault();
 		if (!_consts.isMove) return;
+		if (! _consts.isCopy) _clone(_selDom);
+
 		var offset = $(this).offset();
 		pos.targetLeft = offset.left;
 		pos.targetTop = offset.top;
 		copDom.css('top', e.pageY - pos.ulTop - 12);
 		copDom.css('left', e.pageX - pos.ulLeft);
+
 		//console.log(e.pageY);
 		//console.log(e.pageX - pos.targetLeft);
 	})
 
 	$(selector).on('mouseup', '.mm', function(e) {
 		_consts.isMove = false;
+		_consts.isCopy = false;
+		if (copDom.length >= 1) {
+			copDom.remove();
+			_selDom.parent().css({
+				opacity: 1,
+				border: '1px #fff solid'
+			});
+		}
+
 	})
 
 	_init();
