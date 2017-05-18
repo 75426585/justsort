@@ -21,6 +21,11 @@ $.fn.justSort = function(selector, config, data) {
 		targetDd: null,
 		arrow: null,
 	};
+
+	var copDom = {
+
+	};
+
 	var pos = {
 		ulTop: 0,
 		ulLeft: 0,
@@ -35,6 +40,8 @@ $.fn.justSort = function(selector, config, data) {
 	};
 
 	var _html = '';
+
+	var _mouse = {}
 
 	//初始化
 	var _init = function() {
@@ -81,6 +88,26 @@ $.fn.justSort = function(selector, config, data) {
 		dom.html('<use xlink:href="#icon-jianhao"></use>');
 	}
 
+	//复制选中元素
+	var _clone = function(dom) {
+		copDom = dom.clone();
+		var width = dom.width();
+		copDom.css({
+			position: 'absolute',
+			opacity: 0.8,
+			width: width,
+			border: '1px #444 dashed'
+		});
+		copDom.css('top', _mouse.top);
+		copDom.css('left', _mouse.left);
+		$(selector).find('.mm').append(copDom);
+		dom.css({
+			border: '1px #aaa dashed',
+			opacity: 0.3
+		});
+	}
+
+	//切换展示与显示
 	$(selector).on('click', '.mm svg', function() {
 		var status = $(this).find('use').attr('xlink:href');
 		if (status == '#icon-jiahao1') {
@@ -88,6 +115,34 @@ $.fn.justSort = function(selector, config, data) {
 		} else {
 			_close($(this));
 		}
+	})
+
+	//父级菜单的拖拽
+	$(selector).on('mousedown', '.mm li div', function(e) {
+		dom.selectId = $(this).attr('data-id');
+		//查看父级中是否有子菜单，如果有的话，则不能变成子菜单
+		dom.hasChild = $(this).parent().find('ul li').length;
+		_consts.isMove = true;
+		_mouse.top = e.pageY;
+		_mouse.left = e.pageX;
+		_clone($(this));
+		//out.selectId = dom.selectDd.attr('id').replace('dd_', '');
+	})
+
+	$(selector).on('mousemove', '.mm', function(e) {
+		e.preventDefault();
+		if (!_consts.isMove) return;
+		var offset = $(this).offset();
+		pos.targetLeft = offset.left;
+		pos.targetTop = offset.top;
+		copDom.css('top', e.pageY - pos.ulTop - 12);
+		copDom.css('left', e.pageX - pos.ulLeft);
+		//console.log(e.pageY);
+		//console.log(e.pageX - pos.targetLeft);
+	})
+
+	$(selector).on('mouseup', '.mm', function(e) {
+		_consts.isMove = false;
 	})
 
 	_init();
