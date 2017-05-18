@@ -63,8 +63,8 @@ $.fn.justSort = function(selector, config, data) {
 				_html += '<div class="li-item" data-pid="0" data-id="' + data[i].id + '" data-url="' + data[i].url + '">';
 				_html += '<svg class="icon open" aria-hidden="true"> <use xlink:href="#icon-jianhao"></use> </svg>';
 				_html += '<span>' + data[i].name + '</span></div>';
-				var length2 = data[i].children.length;
-				if (length2) {
+				if (data[i].children) {
+					var length2 = data[i].children.length;
 					_html += '<ul>';
 					for (var y = 0; y < length2; y++) {
 						_html += '<li><div class="li-item" data-id="' + data[i].children[y].id + '" data-url="' + data[i].children[y].url + '" data-pid="' + data[i].id + '"><span>' + data[i].children[y].name + '</span></div></li>';
@@ -115,6 +115,11 @@ $.fn.justSort = function(selector, config, data) {
 		});
 	}
 
+	//处理移动过程
+	var _proMove = function(){
+
+	}
+
 	//切换展示与显示
 	$(selector).on('click', '.mm svg', function(e) {
 		var status = $(this).find('use').attr('xlink:href');
@@ -142,13 +147,15 @@ $.fn.justSort = function(selector, config, data) {
 	$(selector).on('mousemove', '.mm', function(e) {
 		e.preventDefault();
 		if (!_consts.isMove) return;
-		if (! _consts.isCopy) _clone(_selDom);
+		if (!_consts.isCopy) _clone(_selDom);
 
 		var offset = $(this).offset();
 		pos.targetLeft = offset.left;
 		pos.targetTop = offset.top;
 		copDom.css('top', e.pageY - pos.ulTop - 12);
 		copDom.css('left', e.pageX - pos.ulLeft);
+
+		_proMove();
 
 		//console.log(e.pageY);
 		//console.log(e.pageX - pos.targetLeft);
@@ -159,9 +166,14 @@ $.fn.justSort = function(selector, config, data) {
 		_consts.isCopy = false;
 		if (copDom.length >= 1) {
 			copDom.remove();
-			_selDom.parent().css({
+			if (_selData.selectPid == '0') {
+				var dom = _selDom.parent();
+			} else {
+				dom = _selDom;
+			}
+			dom.css({
 				opacity: 1,
-				border: '1px #fff solid'
+				border: 'none'
 			});
 		}
 
